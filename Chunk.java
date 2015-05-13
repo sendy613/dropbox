@@ -1,4 +1,4 @@
-package dropbox;
+package sendrovitz.dropbox;
 
 public class Chunk {
 	

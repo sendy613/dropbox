@@ -1,4 +1,4 @@
-package dropbox;
+package sendrovitz.dropbox;
 
 import java.io.File;
 import java.util.List;
