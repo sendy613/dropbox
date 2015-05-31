@@ -17,8 +17,8 @@ public class FileCache {
 		new File(ROOT).mkdir();
 	}
 
-	public List<File> getFiles(String userName) {
-		File folder = new File(ROOT + "/" + userName);
+	public List<File> getFiles() {
+		File folder = new File(ROOT);
 
 		File[] listOfFiles = folder.listFiles();
 
@@ -30,6 +30,10 @@ public class FileCache {
 		ArrayList<File> array = new ArrayList<File>(Arrays.asList(listOfFiles));
 		return array;
 
+	}
+	
+	public int getNumberFiles(){
+		return getFiles().size();
 	}
 
 	public void addChunk(Chunk chunk) {// array of bites

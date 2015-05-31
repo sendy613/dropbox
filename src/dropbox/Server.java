@@ -1,14 +1,15 @@
 package dropbox;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-
-public class Server {
+public class Server implements ReaderListener {
 	private List<String> userNames;
 	private FileCache fileCache;
 	private ServerSocket serverSocket;
@@ -31,8 +32,8 @@ public class Server {
 			threadWrite.start();
 			while (true) {
 				socket = serverSocket.accept();
-				synchronized(sockets){
-				sockets.add(socket);
+				synchronized (sockets) {
+					sockets.add(socket);
 				}
 				ReaderRunnable readerThread = new ReaderRunnable(socket, this);
 				Thread threadRead = new Thread(readerThread);
@@ -62,5 +63,35 @@ public class Server {
 
 	}
 
-}
+	public List<File> List() {
+		return fileCache.getFiles();
+		// the server will check to see if length is 0. if not it will send the
+		// name,date,size
+	}
+
+	public Chunk Download(String filename, int offset, int chunkSize) {
+		List<File> list = List();
+		File requested = null;
+		for (File f : list) {
+			if (f.getName().compareTo(filename) == 0) {
+				requested = f;
+				break;
+			}
+		}
+		if (requested == null) {
+			// do something
+		}
+
+		Chunk c = fileCache.getChunk(requested, filename, offset, chunkSize);
+		return c;
+	}
+	
+	public void Chunk(String filename,int lastModified, int fileSize,int offset, String base64){
+		File  f = new File(filename);
+		f.setLastModified((Integer)lastModified);
+		Chunk chunk = fileCache.getChunk(f,filename,offset, fileSize);
+		fileCache.addChunk(chunk);
+	
+	}
+
 }
