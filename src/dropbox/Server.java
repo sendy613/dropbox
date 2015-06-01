@@ -5,12 +5,13 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Server implements ReaderListener {
-	private List<String> userNames;
+	private List<Messages> messages;
 	private FileCache fileCache;
 	private ServerSocket serverSocket;
 	private LinkedList<Socket> sockets;
@@ -19,7 +20,10 @@ public class Server implements ReaderListener {
 
 	public Server(FileCache fileCache, List<String> userNames) {
 		this.fileCache = fileCache;
-		this.userNames = userNames;
+		this.messages = new ArrayList<Messages>();
+		messages.add(new ListMessage(this.fileCache));
+		messages.add(new ChunkMessageServer());
+		messages.add(new Download());
 		sockets = new LinkedList<Socket>();
 		queue = new LinkedBlockingQueue<String>();
 
