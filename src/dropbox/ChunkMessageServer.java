@@ -10,7 +10,7 @@ public class ChunkMessageServer extends Messages {
 	}
 
 	@Override
-	public void perform(OutputStream outStream) {
+	public void perform(OutputStream outStream, String[] array) {
 		writer = new PrintWriter(outStream);
 		
 	}

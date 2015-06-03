@@ -55,7 +55,7 @@ public class Client implements ReaderListener{
 				e.printStackTrace();
 			}
 		}
-		message.perform(out);
+		message.perform(out, array);
 	}
 
 

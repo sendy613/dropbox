@@ -11,6 +11,6 @@ public abstract class Messages {
 	public boolean matches(String message){
 		return string.equalsIgnoreCase(message);
 	}
-	public abstract void perform(OutputStream outStream);
+	public abstract void perform(OutputStream outStream, String[] array);
 	
 }

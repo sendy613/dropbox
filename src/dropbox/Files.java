@@ -1,7 +1,6 @@
 package dropbox;
 
 import java.io.OutputStream;
-import java.io.PrintWriter;
 
 public class Files extends Messages{
 
@@ -10,8 +9,7 @@ public class Files extends Messages{
 	}
 
 	@Override
-	public void perform(OutputStream outStream) {
-		writer = new PrintWriter(outStream);
+	public void perform(OutputStream outStream, String[] array) {
 		
 	}
 
