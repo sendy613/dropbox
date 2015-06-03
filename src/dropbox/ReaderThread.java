@@ -6,12 +6,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-public class ReaderRunnable implements Runnable {
+public class ReaderThread extends Thread {
 	// read individ lines from stream and do something with it
 	private Socket socket;
 	private ReaderListener listener;
 	
-	public ReaderRunnable(Socket socket, ReaderListener listener) {
+	public ReaderThread(Socket socket, ReaderListener listener) {
 		this.socket = socket;
 		this.listener = listener;
 	}
@@ -24,7 +24,7 @@ public class ReaderRunnable implements Runnable {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				// tells listener that read a line
-				listener.onLineRead(line);
+				listener.onLineRead(line, socket.getOutputStream());
 			}
 
 		} catch (IOException e) {

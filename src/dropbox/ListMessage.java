@@ -1,8 +1,9 @@
 package dropbox;
 
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+
+
 
 public class ListMessage extends Messages {
 
@@ -13,8 +14,12 @@ public class ListMessage extends Messages {
 
 
 	@Override
-	public void perform() {
-		ObjectOutputStream outStream = new ObjectOutputStream(new FileOutputStream());
+	public void perform(OutputStream outStream) {
+		writer = new PrintWriter(outStream);
+		writer.println("FILES " + fileCache.getNumberFiles());
+		for(int i =0; i<fileCache.getNumberFiles(); i++){
+			writer.println("FILE ");
+		}
 		
 		
 	}
