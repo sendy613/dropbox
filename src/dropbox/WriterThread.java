@@ -1,27 +1,25 @@
 package dropbox;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class WriterThread implements Runnable {
+public class WriterThread extends Thread {
 	private LinkedBlockingQueue<String> queue;
-	private LinkedList<Socket> sockets;
+	private List<Messages> messages;
+	private OutputStream out;
+	//private LinkedList<Socket> sockets;
 
-	public WriterThread(LinkedBlockingQueue<String> queue, LinkedList<Socket> sockets) {
+	public WriterThread(LinkedBlockingQueue<String> queue,List<Messages>messages, OutputStream out) {
 		this.queue = queue;
-		this.sockets = sockets;
+		this.messages=messages;
+		this.out =out;
+		//this.sockets = sockets;
 	}
 
 	@Override
 	public void run() {
-		OutputStream out;
-		PrintWriter writer;
 		String s = null;
 		while(true){			
 			try {
@@ -29,22 +27,25 @@ public class WriterThread implements Runnable {
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}
-			synchronized(sockets){
-				Iterator<Socket> iter = sockets.iterator();
-				while(iter.hasNext()){
-					Socket sck = iter.next();
-					try{
-						out = sck.getOutputStream();
-						writer = new PrintWriter(out);
-						writer.println(s);
-						writer.flush();
-						}
-						catch (IOException e) {
-							iter.remove();
-							e.printStackTrace();
-						} 
+			String[] array = s.split(" ");
+			Messages message =null;
+			for(Messages m: messages){
+				if(m.matches(array[0])){
+					message = m;
+					break;
 				}
 			}
+			
+			if(message ==null){
+				try {
+					throw new InvalidDataException();
+				} catch (InvalidDataException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			message.perform(out);
+		
 		} 
 
 	}

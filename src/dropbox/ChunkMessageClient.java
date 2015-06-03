@@ -1,5 +1,8 @@
 package dropbox;
 
+import java.io.OutputStream;
+import java.io.PrintWriter;
+
 public class ChunkMessageClient extends Messages{
 
 
@@ -8,8 +11,8 @@ public class ChunkMessageClient extends Messages{
 	}
 
 	@Override
-	public void perform() {
-		// TODO Auto-generated method stub
+	public void perform(OutputStream outStream, String[] arrays) {
+		writer = new PrintWriter(outStream);
 		
 	}
 

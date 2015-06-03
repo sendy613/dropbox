@@ -2,6 +2,7 @@ package dropbox;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,8 +16,6 @@ public class Server implements ReaderListener {
 	private FileCache fileCache;
 	private ServerSocket serverSocket;
 	private LinkedList<Socket> sockets;
-	private LinkedBlockingQueue<String> queue;
-	private WriterThread writerThread;
 
 	public Server(FileCache fileCache, List<String> userNames) {
 		this.fileCache = fileCache;
@@ -25,23 +24,18 @@ public class Server implements ReaderListener {
 		messages.add(new ChunkMessageServer());
 		messages.add(new Download());
 		sockets = new LinkedList<Socket>();
-		queue = new LinkedBlockingQueue<String>();
 
 		try {
 
 			this.serverSocket = new ServerSocket(2009);
 			Socket socket;
-			writerThread = new WriterThread(queue, sockets);
-			Thread threadWrite = new Thread(writerThread);
-			threadWrite.start();
 			while (true) {
 				socket = serverSocket.accept();
 				synchronized (sockets) {
 					sockets.add(socket);
 				}
-				ReaderRunnable readerThread = new ReaderRunnable(socket, this);
-				Thread threadRead = new Thread(readerThread);
-				threadRead.start();
+				ReaderThread readerThread = new ReaderThread(socket, this);
+				readerThread.start();
 			}
 
 		} catch (IOException e) {
@@ -51,8 +45,25 @@ public class Server implements ReaderListener {
 	}
 
 	@Override
-	public void onLineRead(String line) {
-		queue.add(line);
+	public void onLineRead(String line, OutputStream out) {
+		String[] array = line.split(" ");
+		Messages message = null;
+		for (Messages m : messages) {
+			if (m.matches(array[0])) {
+				message = m;
+				break;
+			}
+		}
+
+		if (message == null) {
+			try {
+				throw new InvalidDataException();
+			} catch (InvalidDataException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		message.perform(out, array);
 
 	}
 
@@ -67,11 +78,7 @@ public class Server implements ReaderListener {
 
 	}
 
-	public List<File> List() {
-		return fileCache.getFiles();
-		// the server will check to see if length is 0. if not it will send the
-		// name,date,size
-	}
+	
 
 	public Chunk Download(String filename, int offset, int chunkSize) {
 		List<File> list = List();
@@ -89,13 +96,14 @@ public class Server implements ReaderListener {
 		Chunk c = fileCache.getChunk(requested, filename, offset, chunkSize);
 		return c;
 	}
-	
-	public void Chunk(String filename,int lastModified, int fileSize,int offset, String base64){
-		File  f = new File(filename);
-		f.setLastModified((Integer)lastModified);
-		Chunk chunk = fileCache.getChunk(f,filename,offset, fileSize);
+
+	public void Chunk(String filename, int lastModified, int fileSize,
+			int offset, String base64) {
+		File f = new File(filename);
+		f.setLastModified((Integer) lastModified);
+		Chunk chunk = fileCache.getChunk(f, filename, offset, fileSize);
 		fileCache.addChunk(chunk);
-	
+
 	}
 
 }

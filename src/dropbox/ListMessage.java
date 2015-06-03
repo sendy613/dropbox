@@ -1,5 +1,13 @@
 package dropbox;
 
+<<<<<<< HEAD
+=======
+import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.List;
+
+>>>>>>> origin/master
 
 
 public class ListMessage extends Messages {
@@ -11,8 +19,18 @@ public class ListMessage extends Messages {
 
 
 	@Override
+<<<<<<< HEAD
 	public void perform() {
 		
+=======
+	public void perform(OutputStream outStream) {
+		writer = new PrintWriter(outStream);
+		writer.println("FILES " + fileCache.getNumberFiles());
+		List<File> files = fileCache.getFiles();
+		for(int i =0; i<fileCache.getNumberFiles(); i++){
+			writer.println("FILE "+ files.get(i).getName() + " " + files.get(i).lastModified() + " "+ files.get(i).length()+"\n");
+		}
+>>>>>>> origin/master
 		
 		
 	}
