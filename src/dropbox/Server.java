@@ -17,8 +17,8 @@ public class Server implements ReaderListener {
 	private ServerSocket serverSocket;
 	private LinkedList<Socket> sockets;
 
-	public Server(FileCache fileCache, List<String> userNames) {
-		this.fileCache = fileCache;
+	public Server() {
+		this.fileCache = new FileCache("server");
 		this.messages = new ArrayList<Messages>();
 		messages.add(new ListMessage(this.fileCache));
 		messages.add(new ChunkMessageServer());
@@ -80,30 +80,5 @@ public class Server implements ReaderListener {
 
 	
 
-	public Chunk Download(String filename, int offset, int chunkSize) {
-		List<File> list = List();
-		File requested = null;
-		for (File f : list) {
-			if (f.getName().compareTo(filename) == 0) {
-				requested = f;
-				break;
-			}
-		}
-		if (requested == null) {
-			// do something
-		}
-
-		Chunk c = fileCache.getChunk(requested, filename, offset, chunkSize);
-		return c;
-	}
-
-	public void Chunk(String filename, int lastModified, int fileSize,
-			int offset, String base64) {
-		File f = new File(filename);
-		f.setLastModified((Integer) lastModified);
-		Chunk chunk = fileCache.getChunk(f, filename, offset, fileSize);
-		fileCache.addChunk(chunk);
-
-	}
 
 }

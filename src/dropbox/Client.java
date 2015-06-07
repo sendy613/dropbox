@@ -22,7 +22,7 @@ public class Client implements ReaderListener{
 		catch(IOException ex){
 			ex.printStackTrace();
 		}
-		new File("user/").mkdir();
+		fileCache = new FileCache("client");
 		messages = new ArrayList<Messages>();
 		messages.add(new Sync());
 		messages.add(new ChunkMessageClient());

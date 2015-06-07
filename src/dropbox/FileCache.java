@@ -13,8 +13,8 @@ public class FileCache {
 
 	private static final String ROOT = "dropbox/";
 
-	public FileCache() {
-		new File(ROOT).mkdir();
+	public FileCache(String user) {
+		new File(ROOT+user).mkdir();
 	}
 
 	public List<File> getFiles() {

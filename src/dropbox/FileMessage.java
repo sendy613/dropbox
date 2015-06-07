@@ -7,6 +7,7 @@ import java.util.List;
 
 public class FileMessage extends Messages {
 
+	private final int MAXCHUNKSIZE = 512;
 
 	public FileMessage(FileCache fileCache){
 		string = "FILE";
@@ -31,13 +32,29 @@ public class FileMessage extends Messages {
 		if(found && fileFound.lastModified() != Long.parseLong(array[2])){
 			//download and get rid
 			files.remove(indexFound);
-			writer.println("DOWNLOAD");
+			sendDownloadMessage(fileFound);
 		}
 		else if(!found){
 			//download
+			sendDownloadMessage(fileFound);
 		}
 		
 	}
-
+public void sendDownloadMessage(File fileFound){
+	long fileSize = fileFound.length();
+	long sizeLeft = fileSize;
+	long offset = 0;
+	while(sizeLeft>0){
+		if(sizeLeft >MAXCHUNKSIZE){
+		writer.println("DOWNLOAD "+ fileFound.getName()+ " " + offset + " " + MAXCHUNKSIZE);
+		sizeLeft -= MAXCHUNKSIZE;
+		offset += MAXCHUNKSIZE;
+		}
+		else{
+			writer.println("DOWNLOAD "+ fileFound.getName()+ " " + offset + " " + sizeLeft);
+			break;
+		}
+	}
+}
 	
 }
