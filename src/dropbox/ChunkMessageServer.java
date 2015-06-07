@@ -10,9 +10,12 @@ import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingExcepti
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 public class ChunkMessageServer extends Messages {
+	
+	
 
-	public ChunkMessageServer() {
+	public ChunkMessageServer(FileCache fileCache) {
 		string = "CHUNK";
+		this.fileCache=fileCache;
 	}
 
 	@Override

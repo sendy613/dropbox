@@ -12,8 +12,9 @@ import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 public class ChunkMessageClient extends Messages {
 
-	public ChunkMessageClient() {
+	public ChunkMessageClient(FileCache cache) {
 		string = "CHUNK";
+		this.fileCache=cache;
 	}
 
 	@Override
